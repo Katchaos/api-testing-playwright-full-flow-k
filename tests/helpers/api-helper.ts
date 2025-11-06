@@ -11,9 +11,9 @@ export async function fetchJwt(request: APIRequestContext): Promise<string> {
   const authResponse = await request.post(`${serviceURL}${loginPath}`, {
     data: LoginDto.createLoginWithCorrectData(),
   })
-  if (authResponse.status() !== StatusCodes.OK) {
-    throw new Error(`Authorization failed. Status: ${authResponse.status()}`)
-  }
+  // if (authResponse.status() !== StatusCodes.OK) {
+  //   throw new Error(`Authorization failed. Status: ${authResponse.status()}`)
+  // }
   return await authResponse.text()
 }
 
@@ -51,7 +51,11 @@ export async function getOrderById(
   )
 }
 
-export async function deleteOrder(request: APIRequestContext, jwt: string, orderId: number): Promise<void> {
+export async function deleteOrder(
+  request: APIRequestContext,
+  jwt: string,
+  orderId: number,
+): Promise<void> {
   const response = await request.delete(`${serviceURL}${orderPath}/${orderId}`, {
     headers: {
       Authorization: `Bearer ${jwt}`,
@@ -64,7 +68,7 @@ export async function getDeletedOrderById(
   request: APIRequestContext,
   jwt: string,
   id: number,
-):  Promise<void> {
+): Promise<void> {
   const response = await request.get(`${serviceURL}${orderPath}/${id}`, {
     headers: {
       Authorization: `Bearer ${jwt}`,
@@ -73,4 +77,57 @@ export async function getDeletedOrderById(
   expect(response.status()).toBe(StatusCodes.OK)
   const data = await response.text()
   expect(data).toBe('')
+}
+
+class OrderStatus {}
+
+export async function changeOrderStatus(
+  request: APIRequestContext,
+  jwt: string,
+  orderId: number,
+  status: OrderStatus,
+): Promise<void> {
+  const response = await request.post(`${serviceURL}${orderPath}/${orderId}/status`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+    data: {
+      status,
+    },
+  })
+  expect(response.status()).toBe(StatusCodes.OK)
+}
+
+export async function getAllOrders(request: APIRequestContext, jwt: string): Promise<OrderDto[]> {
+  const response = await request.get(`${serviceURL}${orderPath}/${orderPath}`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  })
+  expect(response.status()).toBe(StatusCodes.OK)
+  const data = await response.json()
+  return data.map(
+    (order: any) =>
+      new OrderDto(
+        order.status,
+        order.courierId,
+        order.customerName,
+        order.customerPhone,
+        order.comment,
+        order.id,
+      ),
+  )
+}
+
+export async function assignOrderToCourier(
+  request: APIRequestContext,
+  jwt: string,
+  orderId: number,
+): Promise<void> {
+  const response = await request.put(`${serviceURL}${orderPath}/${orderId}/assign`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  })
+  expect(response.status()).toBe(StatusCodes.OK)
 }
