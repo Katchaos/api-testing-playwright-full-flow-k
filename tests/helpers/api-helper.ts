@@ -119,4 +119,15 @@ export async function getAllOrders(request: APIRequestContext, jwt: string): Pro
   )
 }
 
-export async function assignOrderToCourier() {}
+export async function assignOrderToCourier(
+  request: APIRequestContext,
+  jwt: string,
+  orderId: number,
+): Promise<void> {
+  const response = await request.put(`${serviceURL}${orderPath}/${orderId}/assign`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  })
+  expect(response.status()).toBe(StatusCodes.OK)
+}

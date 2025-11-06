@@ -56,7 +56,7 @@ test('create two orders and get all orders', async ({ request }) => {
 test('create an order and change its status', async ({ request }) => {
   const orderId = await createOrder(request, jwt)
   expect.soft(orderId).toBeGreaterThan(0)
-  await assignOrderToCourier(courierJwt, orderId)
+  await assignOrderToCourier(request, jwt, orderId)
   const orderStatus = await changeOrderStatus(request, courierJwt, orderId, StatusDto.DELIVERED)
   expect.soft(orderStatus).toBe(StatusDto.DELIVERED)
   console.log(orderStatus)
