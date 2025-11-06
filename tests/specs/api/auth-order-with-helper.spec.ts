@@ -5,7 +5,9 @@ import {
   getOrderById,
   deleteOrder,
   getDeletedOrderById,
-  getAllOrders, changeOrderStatus, assignOrderToCourier,
+  getAllOrders,
+  changeOrderStatus,
+  assignOrderToCourier,
 } from '../../helpers/api-helper'
 import { StatusDto } from '../../dto/status-dto'
 import { OrderDto } from '../../dto/order-dto'
@@ -42,14 +44,13 @@ test('create two orders and get all orders', async ({ request }) => {
   expect.soft(orderIdOne).toBeGreaterThan(0)
   const orderIdTwo = await createOrder(request, jwt)
   expect.soft(orderIdOne).toBeGreaterThan(0)
-  const allOrders = await getAllOrders(request, jwt);
+  const allOrders = await getAllOrders(request, jwt)
   const order: OrderDto = await getOrderById(request, jwt, orderIdOne)
   const orderTwo: OrderDto = await getOrderById(request, jwt, orderIdTwo)
   expect.soft(order.id).toBe(orderIdOne)
   expect.soft(orderTwo.id).toBe(orderIdTwo)
-  await getAllOrders(request, '');
-  console.log(allOrders);
-
+  await getAllOrders(request, '')
+  console.log(allOrders)
 })
 
 test('create an order and change its status', async ({ request }) => {

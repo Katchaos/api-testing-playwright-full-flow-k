@@ -51,7 +51,11 @@ export async function getOrderById(
   )
 }
 
-export async function deleteOrder(request: APIRequestContext, jwt: string, orderId: number): Promise<void> {
+export async function deleteOrder(
+  request: APIRequestContext,
+  jwt: string,
+  orderId: number,
+): Promise<void> {
   const response = await request.delete(`${serviceURL}${orderPath}/${orderId}`, {
     headers: {
       Authorization: `Bearer ${jwt}`,
@@ -64,7 +68,7 @@ export async function getDeletedOrderById(
   request: APIRequestContext,
   jwt: string,
   id: number,
-):  Promise<void> {
+): Promise<void> {
   const response = await request.get(`${serviceURL}${orderPath}/${id}`, {
     headers: {
       Authorization: `Bearer ${jwt}`,
@@ -102,16 +106,17 @@ export async function getAllOrders(request: APIRequestContext, jwt: string): Pro
   })
   expect(response.status()).toBe(StatusCodes.OK)
   const data = await response.json()
-  return data.map((order: any) => new OrderDto(
-    order.status,
-    order.courierId,
-    order.customerName,
-    order.customerPhone,
-    order.comment,
-    order.id,
-  ))
+  return data.map(
+    (order: any) =>
+      new OrderDto(
+        order.status,
+        order.courierId,
+        order.customerName,
+        order.customerPhone,
+        order.comment,
+        order.id,
+      ),
+  )
 }
 
-export async function assignOrderToCourier() {
-
-}
+export async function assignOrderToCourier() {}
